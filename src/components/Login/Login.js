@@ -1,14 +1,9 @@
 
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from '@material-ui/core';
-import GoogleIcon from '@mui/icons-material/Google';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Box from '@mui/material/Box';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-
-
-
 
 const Login = ({handleChange, onSubmit,}) => {
   const initialValues = {
@@ -51,14 +46,10 @@ const Login = ({handleChange, onSubmit,}) => {
                       </Form>
                     )}
                   </Formik>
-                  
-                
                  <Typography>
-                   Do you have an account?
+                   Don't you have an account?
                    <Link style={{cursor: 'pointer'}} onClick={()=>handleChange("event",1)}> sign up</Link>
                  </Typography>
-                 <Typography align='center'>OR</Typography>
-                 <Box sx={{ textAlign: 'center', m: 1 }}><Button  variant="contained" color="primary" ><GoogleIcon mx-2 color ="red[500]"/>  Sign in with Google</Button></Box>
               </Paper>
             </Grid>
         </div>
