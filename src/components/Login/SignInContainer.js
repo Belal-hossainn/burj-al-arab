@@ -42,41 +42,75 @@ const SignInContainer = () => {
           history.replace(from);
       }
     }
-    const handleBlur = (e)=>{
-      let isFormValid;
-      if(e.target.name === 'email'){
-          isFormValid = /\S+@\S+\.\S+/.test(e.target.value);
-      };
-      if(e.target.name === 'password'){
-        const isPasswordValid = /\d{1}/.test(e.target.value);
-        const isPassLength = e.target.value.length > 6;
-        isFormValid = isPassLength && isPasswordValid;
-      }
-      if(isFormValid){
-        const userInfo = {...user};
-        userInfo[e.target.name] = e.target.value;
-        setUser(userInfo);
-        console.log(userInfo)
-      }
-    }
+    // const handleBlur = (e)=>{
+    //   let isFormValid;
+    //   if(e.target.name === 'email'){
+    //       isFormValid = /\S+@\S+\.\S+/.test(e.target.value);
+    //   };
+    //   if(e.target.name === 'password'){
+    //     const isPasswordValid = /\d{1}/.test(e.target.value);
+    //     const isPassLength = e.target.value.length > 6;
+    //     isFormValid = isPassLength && isPasswordValid;
+    //   }
+    //   if(isFormValid){
+    //     const userInfo = {...user};
+    //     userInfo[e.target.name] = e.target.value;
+    //     setUser(userInfo);
+    //     console.log(userInfo)
+    //   }
+    // }
     const handleSubmit = (e) => {
       e.preventDefault();
-      if ( newUser  && user.email && user.password) {
-        createUserWithEmailAndPassword(user.name, user.email, user.password)
+      
+     
+    };
+    const handleSignUp = (values, props)=>{
+      const newUserInfo = {
+        isSignedIn: true,
+        name: values.name,
+        email: values.email,
+        password: values.password
+      }
+      console.log(newUserInfo)
+      setUser(newUserInfo);
+
+      if ( values.email && values.password) {
+        createUserWithEmailAndPassword(values.name, values.email.trim(), values.password)
         .then(res => {
             console.log(res)
           handleResponse(res, true);
         })
       }
-      if(!newUser && user.email && user.password){
-        signInWithEmailAndPassword(user.email, user.password)
+      setTimeout(()=>{
+         props.resetForm();
+         props.setSubmitting(true)
+      }, 2000)
+  };
+
+    const onSubmit = (values, props) =>{
+      const newUserInfo = {
+        isSignedIn: true,
+      email: values.email,
+      password: values.password
+      }
+      console.log(newUserInfo)
+      setUser(newUserInfo)
+
+      if( values.email && values.password){
+        console.log(values.email)
+        signInWithEmailAndPassword(values.email.trim(), values.password)
         .then(res => {
+          console.log(res)
           handleResponse(res, true);
         })
       }
+      setTimeout(()=>{
+        props.resetForm();
+        // props.setSubmitting(true)
+      }, 2000)
     };
 
-
+    
 
     const [value, setValue] = useState(0);
 
@@ -118,10 +152,10 @@ const SignInContainer = () => {
           <Tab label="Sign Up" />
         </Tabs>
         <TabPanel value={value} index={0}>
-       <Login handleChange={handleChange}/>
+       <Login onSubmit={onSubmit} handleChange={handleChange}/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-      <SignUp />
+      <SignUp handleSignUp={handleSignUp}/>
       </TabPanel>
       </Paper>
     );
