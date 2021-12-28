@@ -6,12 +6,18 @@ import './App.css';
 import Book from './components/Book/Book';
 import Header from './components/Header/Header';
 import Home from './components/Home/Home';
-import Login from './components/Login/Login';
+import Login2 from './components/Login/Login2';
+import SignInContainer from './components/Login/SignInContainer';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 export const UserContext = createContext()
 
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState({})
+  const [loggedInUser, setLoggedInUser] = useState({
+    isSignedIn: false,
+    name: '',
+    email: '',
+    password: ''
+  })
   return (
     <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
       <Router>
@@ -22,7 +28,10 @@ function App() {
               <Home />
             </Route>
             <Route path="/login">
-              <Login />
+              <SignInContainer />
+            </Route>
+            <Route path="/signUp">
+              <Login2 />
             </Route>
             <PrivateRoute path="/book/:bedType">
               <Book />
