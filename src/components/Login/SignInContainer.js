@@ -4,16 +4,16 @@ import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Typography from '@material-ui/core/Typography';
+import * as firebase from "firebase/app";
 import React, { useContext, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { UserContext } from '../../App';
 import Login from './Login';
-import { createUserWithEmailAndPassword, handleGoogleSignIn, initializeLoginFramework, signInWithEmailAndPassword } from './LoginManager';
+import { createUserWithEmailAndPassword, initializeLoginFramework, signInWithEmailAndPassword } from './LoginManager';
 import SignUp from './SignUp';
 
 const SignInContainer = () => {
     initializeLoginFramework();
-    const [newUser, setNewUser] = useState(false);
     const [user, setUser] = useState({
       isSignedIn: false,
       name: '',
@@ -26,44 +26,15 @@ const SignInContainer = () => {
     const location = useLocation();
     let { from } = location.state || { from: { pathname: "/" } };
    
-    const googleSignIn  = () =>{
-      console.log('ccliccked')
-      handleGoogleSignIn()
-      .then(res => {
-        handleResponse(res, true)
-      })
-    }
-  
-  
-    const handleResponse = (res, redirect) =>{
+    const handleResponse = (res) =>{
       setUser(res);
       setLoggedInUser(res);
-      if(redirect){
-          history.replace(from);
-      }
+      storeAuthToken();
+      // if(redirect){
+      //     history.replace(from);
+      // }
     }
-    // const handleBlur = (e)=>{
-    //   let isFormValid;
-    //   if(e.target.name === 'email'){
-    //       isFormValid = /\S+@\S+\.\S+/.test(e.target.value);
-    //   };
-    //   if(e.target.name === 'password'){
-    //     const isPasswordValid = /\d{1}/.test(e.target.value);
-    //     const isPassLength = e.target.value.length > 6;
-    //     isFormValid = isPassLength && isPasswordValid;
-    //   }
-    //   if(isFormValid){
-    //     const userInfo = {...user};
-    //     userInfo[e.target.name] = e.target.value;
-    //     setUser(userInfo);
-    //     console.log(userInfo)
-    //   }
-    // }
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      
-     
-    };
+   
     const handleSignUp = (values, props)=>{
       const newUserInfo = {
         isSignedIn: true,
@@ -93,15 +64,12 @@ const SignInContainer = () => {
       email: values.email,
       password: values.password
       }
-      console.log(newUserInfo)
       setUser(newUserInfo)
 
       if( values.email && values.password){
-        console.log(values.email)
         signInWithEmailAndPassword(values.email.trim(), values.password)
         .then(res => {
-          console.log(res)
-          handleResponse(res, true);
+          handleResponse(res);
         })
       }
       setTimeout(()=>{
@@ -110,7 +78,16 @@ const SignInContainer = () => {
       }, 2000)
     };
 
-    
+const storeAuthToken = ()=>{
+  firebase.auth().currentUser.getIdToken(/* forceRefresh */ true)
+  .then(function(idToken) {
+    console.log(idToken)
+    sessionStorage.setItem("token", idToken);
+    history.replace(from)
+  }).catch(function(error) {
+    // Handle error
+  });
+}
 
     const [value, setValue] = useState(0);
 
